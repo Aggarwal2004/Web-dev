@@ -1,54 +1,37 @@
-var randomnumber1=Math.random();
-randomnumber1=randomnumber1*6;
-randomnumber1=Math.floor(randomnumber1)+1;
+import inquirer from "inquirer";
+import qr from "qr-image";
+import fs from "fs";
 
-var randomnumber2=Math.random();
-randomnumber2=randomnumber2*6;
-randomnumber2=Math.floor(randomnumber2)+1;
 
-if(randomnumber1==1){
-    document.querySelector(".img1").setAttribute("src","./images/dice1.png");
+inquirer
+  .prompt([{
+    message:"Type in your domain name: ",
+    name:"domain",
 }
-else if(randomnumber1==2){
-    document.querySelector(".img1").setAttribute("src","./images/dice2.png");
-}
-else if(randomnumber1==3){
-    document.querySelector(".img1").setAttribute("src","./images/dice3.png");
-}
-else if(randomnumber1==4){
-    document.querySelector(".img1").setAttribute("src","./images/dice4.png");
-}
-else if(randomnumber1==5){
-    document.querySelector(".img1").setAttribute("src","./images/dice5.png");
-}
-else{
-    document.querySelector(".img1").setAttribute("src","./images/dice6.png");
-}
-    
-if(randomnumber2==1){
-    document.querySelector(".img2").setAttribute("src","./images/dice1.png");
-}
-else if(randomnumber2==2){
-    document.querySelector(".img2").setAttribute("src","./images/dice2.png");
-}
-else if(randomnumber2==3){
-    document.querySelector(".img2").setAttribute("src","./images/dice3.png");
-}
-else if(randomnumber2==4){
-    document.querySelector(".img2").setAttribute("src","./images/dice4.png");
-}
-else if(randomnumber2==5){
-    document.querySelector(".img2").setAttribute("src","./images/dice5.png");
-}
-else{
-    document.querySelector(".img2").setAttribute("src","./images/dice6.png");
-}
-   
+  ])
+  .then((answers) => {
+    const url= answers.domain;
+    var qr_svg = qr.image(url);
+    qr_svg.pipe(fs.createWriteStream('qr_img.png'));
+    fs.writeFile('Url.txt', url, (err) => {
+        if (err) throw err;
+        console.log('The file has been saved!');
+      }); 
 
-if(randomnumber1>randomnumber2){
-    document.querySelector("h1").textContent="Player 1 Wins";
-}else if(randomnumber1<randomnumber2){
-    document.querySelector("h1").textContent="Player 2 Wins";
-}else{
-    document.querySelector("h1").textContent="It's a Draw";
-}
+  })
+  .catch((error) => {
+    if (error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+    } else {
+      // Something else went wrong
+    }
+  });
+
+
+
+/* 
+1. Use the inquirer npm package to get user input.
+2. Use the qr-image npm package to turn the user entered URL into a QR code image.
+3. Create a txt file to save the user input using the native fs node module.
+*/
+ 
